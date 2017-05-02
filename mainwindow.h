@@ -21,9 +21,9 @@ private:
     bool isStartButtonClicked = false;
     bool isStopButtonClicked = false;
 private slots:
-    void on_startButton_clicked(bool checked);
+    void on_startButton_clicked();
     void startServer();
-    void on_stopButton_clicked(bool checked);
+    void on_stopButton_clicked();
 
 private:
     Ui::MainWindow *ui;
