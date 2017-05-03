@@ -4,14 +4,7 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <QTimer>
-/*
-class QCamera;
-class QCameraViewfinder;
-class QCameraImageCapture;
-class QVBoxLayout;
-class QMenu;
-class QAction;
-*/
+
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -32,17 +25,9 @@ public:
     ~MainWindow();
 
 private:
-  /*  QCamera *mCamera;
-    QCameraViewfinder *mCameraViewfinder;
-    QCameraImageCapture *mCameraImageCapture;
-    QVBoxLayout *mLayout;
-    QMenu *mOptionsMenu;
-    QAction *mTurnAction;
-    QAction *mDeleteAction;
-    QAction *mCaptureAction;
-*/
+
     QTimer *timer;
-    int count=0;
+    int countTime=0;
     char onClickedMessage[64];
     bool isStartButtonClicked = false;
     bool isStopButtonClicked = false;
@@ -52,9 +37,10 @@ private:
     int portNumber;
 private slots:
 
-    void MyTimer();
-    void MyTimerSlot();
-    //void cameraView();
+    void startTimer();
+    void counterTimer();
+    void stopTimer();
+
     void on_startButton_clicked();
     void startServer();
     void on_stopButton_clicked();
