@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,3 +31,5 @@ HEADERS  += mainwindow.h \
     scene2d.h
 
 FORMS    += mainwindow.ui
+
+QMAKE_CXXFLAGS += -std=gnu++14
