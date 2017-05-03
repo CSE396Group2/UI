@@ -59,7 +59,6 @@ void MainWindow::on_startButton_clicked()
         qDebug() << "startButton was clicked";
 
         startTimer();//start timer
-
         ui->coordinatBrowser->append("gurol");
         connectionTh->start();
         qDebug() << "signal";
@@ -103,4 +102,12 @@ void MainWindow::isConnect()
             }
         }
     }
+}
+
+void MainWindow::on_portButton_clicked()
+{
+    QString temp = ui->lineEdit->text();
+    portNumber = temp.toInt();
+    qDebug("portNumber: ");
+    qDebug() << temp.toLatin1();
 }

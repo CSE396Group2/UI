@@ -51,6 +51,8 @@ private slots:
     void on_stopButton_clicked();
     void counterTimer();
 
+    void on_portButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
