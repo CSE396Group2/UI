@@ -12,6 +12,13 @@ class QVBoxLayout;
 class QMenu;
 class QAction;
 */
+#include <QtCore>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+
+#include "scene2d.h"
+#include "drawer.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -40,6 +47,12 @@ private:
     bool isStartButtonClicked = false;
     bool isStopButtonClicked = false;
 
+    Scene2d *scene2d;
+    Drawer *drawer;
+    char onClickedMessage[64];
+    bool isStartButtonClicked = false;
+    bool isStopButtonClicked = false;
+    int portNumber;
 private slots:
 
     void MyTimer();

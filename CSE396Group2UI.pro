@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    scene2d.cpp
+    scene2d.cpp \
+    drawer.cpp
 
 HEADERS  += mainwindow.h \
-    scene2d.h
+    scene2d.h \
+    drawer.h
 
 FORMS    += mainwindow.ui
 

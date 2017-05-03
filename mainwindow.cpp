@@ -14,7 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
   //  cameraView();
-
+    drawer = new Drawer(this);
+    ui->graphicsView->setScene(drawer);
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
 }
 
 MainWindow::~MainWindow()
