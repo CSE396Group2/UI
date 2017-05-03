@@ -98,7 +98,8 @@ void MainWindow::isConnect()
                 socket->waitForBytesWritten(30);
                 socket->waitForReadyRead(30);
 
-                socket->readAll();
+                QByteArray array = socket->readAll();
+                qDebug(array);
             }
         }
     }

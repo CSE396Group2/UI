@@ -41,7 +41,6 @@ private:
     int portNumber;
 
     void startTimer();
-    void counterTimer();
     void stopTimer();
 public slots:
     void isConnect();
@@ -50,6 +49,7 @@ private slots:
     void on_startButton_clicked();
     void startServer();
     void on_stopButton_clicked();
+    void counterTimer();
 
 private:
     Ui::MainWindow *ui;
