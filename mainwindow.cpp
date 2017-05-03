@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     drawer = new Drawer(this);
     ui->graphicsView->setScene(drawer);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    connectionTh = new ConnectionThread(this);
+    connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
+    server = new QTcpServer();
+
 }
 
 MainWindow::~MainWindow()
@@ -57,7 +61,8 @@ void MainWindow::on_startButton_clicked()
         startTimer();//start timer
 
         ui->coordinatBrowser->append("gurol");
-
+        connectionTh->start();
+        qDebug() << "signal";
     }
 }
 
@@ -70,5 +75,31 @@ void MainWindow::on_stopButton_clicked()
 
         isStopButtonClicked = true;
         qDebug() << "stopButton was clicked";
+    }
+}
+
+void MainWindow::isConnect()
+{
+    qDebug("geldim co");
+    if(!server->listen(QHostAddress::Any,portNumber)){
+        qDebug("connection error");
+    }
+    else{
+        qDebug("connection start");
+    }
+
+    while(socket == NULL){
+        if(server->hasPendingConnections()){
+            qDebug("has connection");
+            QTcpSocket *socket = server->nextPendingConnection();
+            while(socket != NULL){
+                socket->write("start");
+                socket->flush();
+                socket->waitForBytesWritten(30);
+                socket->waitForReadyRead(30);
+
+                socket->readAll();
+            }
+        }
     }
 }

@@ -4,9 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia multimediawidgets
+QT       += core gui multimedia multimediawidgets network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = CSE396Group2UI
 TEMPLATE = app
@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     scene2d.cpp \
-    drawer.cpp
+    drawer.cpp \
+    connectionthread.cpp
 
 HEADERS  += mainwindow.h \
     scene2d.h \
-    drawer.h
+    drawer.h \
+    connectionthread.h
 
 FORMS    += mainwindow.ui
 
