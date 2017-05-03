@@ -49,9 +49,6 @@ private:
 
     Scene2d *scene2d;
     Drawer *drawer;
-    char onClickedMessage[64];
-    bool isStartButtonClicked = false;
-    bool isStopButtonClicked = false;
     int portNumber;
 private slots:
 
