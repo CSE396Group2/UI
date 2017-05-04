@@ -5,8 +5,6 @@
 #include <QList>
 #include <QtGui>
 #include <QtCore>
-#include <QTcpSocket>
-#include <QTcpServer>
 
 class Drawer:public QGraphicsScene
 {

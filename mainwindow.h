@@ -8,6 +8,8 @@
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QTcpSocket>
+#include <QTcpServer>
 
 #include "scene2d.h"
 #include "drawer.h"
