@@ -25,13 +25,13 @@ void MainWindow::startTimer()
 {
     // create a timer
     timer = new QTimer(this);
-
     // setup signal and slot
     connect(timer, SIGNAL(timeout()),this, SLOT(counterTimer()));
-
     //msec
-    timer->start(1);
+    timer->start(10);
+
 }
+
 void MainWindow::counterTimer()
 {
     countTime++;
@@ -41,10 +41,15 @@ void MainWindow::counterTimer()
 void MainWindow::stopTimer()
 {
     timer->stop();
-    countTime=0;
-    ui->timerLabel->setText(QString::number(0)+":"+QString::number(0)+":"+QString::number(0));
 }
 
+void MainWindow::restartTimer()
+{
+    timer->stop();
+    countTime=0;
+    ui->timerLabel->setText(QString::number(0)+":"+QString::number(0)+":"+QString::number(0));
+
+}
 
 void MainWindow::startServer(){
     qDebug() << "Server started" ;
@@ -126,4 +131,16 @@ void MainWindow::on_portButton_clicked()
     ipNumber = ui->ipNumberLine->text();
     qDebug("ipNumber: ");
     qDebug(ipNumber.toLatin1());
+}
+
+void MainWindow::on_resetButton_clicked()
+{
+    if(isResetButtonClicked == false){
+         //  isStopButtonClicked = false;
+          // isStartButtonClicked = false;
+
+        restartTimer();//start timer
+        isResetButtonClicked = false;
+     }
+
 }
