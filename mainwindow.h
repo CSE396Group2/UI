@@ -30,7 +30,7 @@ private:
 
     QTimer *timer;
     int countTime=0;
-    QTcpSocket *socket = NULL;
+    QTcpSocket *socket = NULL;    
     QTcpServer *server;
     char onClickedMessage[64];
     bool isStartButtonClicked = false;
@@ -39,7 +39,7 @@ private:
     Scene2d *scene2d;
     Drawer *drawer;
     int portNumber;
-
+    QString ipNumber;
     void startTimer();
     void stopTimer();
 public slots:

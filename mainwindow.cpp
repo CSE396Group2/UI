@@ -79,35 +79,51 @@ void MainWindow::on_stopButton_clicked()
 
 void MainWindow::isConnect()
 {
-    qDebug("geldim co");
-    if(!server->listen(QHostAddress::Any,portNumber)){
-        qDebug("connection error");
-    }
-    else{
-        qDebug("connection start");
-    }
+//    qDebug("geldim co");
+//    if(!server->listen(QHostAddress::Any,portNumber)){
+//        qDebug("connection error");
+//    }
+//    else{
+//        qDebug("connection start");
+//    }
+//    qDebug() << portNumber;
+//    while(socket == NULL){
+//        if(server->hasPendingConnections()){
+//            qDebug("has connection");
+//            QTcpSocket *socket = server->nextPendingConnection();
+//            while(socket != NULL){
+//                socket->write("start");
+//                socket->flush();
+//                socket->waitForBytesWritten(30);
+//                socket->waitForReadyRead(30);
 
-    while(socket == NULL){
-        if(server->hasPendingConnections()){
-            qDebug("has connection");
-            QTcpSocket *socket = server->nextPendingConnection();
-            while(socket != NULL){
-                socket->write("start");
-                socket->flush();
-                socket->waitForBytesWritten(30);
-                socket->waitForReadyRead(30);
+//                QByteArray array = socket->readAll();
+//                qDebug(array);
+//            }
+//        }
+//    }
+    QHostAddress hostAddr(ipNumber);
+    socket = new QTcpSocket(this);
+    socket->connectToHost(hostAddr,portNumber);
 
-                QByteArray array = socket->readAll();
-                qDebug(array);
-            }
+    if(socket->waitForConnected(5000)){
+        while(!isStopButtonClicked){
+            socket->write("selam");
+            socket->waitForBytesWritten(3000);
         }
+        qDebug("stop press");
+        socket->write("q");
+        socket->waitForBytesWritten(3000);
     }
 }
 
 void MainWindow::on_portButton_clicked()
 {
-    QString temp = ui->lineEdit->text();
+    QString temp = ui->portNumberLine->text();
     portNumber = temp.toInt();
     qDebug("portNumber: ");
     qDebug() << temp.toLatin1();
+    ipNumber = ui->ipNumberLine->text();
+    qDebug("ipNumber: ");
+    qDebug(ipNumber.toLatin1());
 }
