@@ -11,8 +11,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->graphicsView->setScene(drawer);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     connectionTh = new ConnectionThread(this);
+    socket = new QTcpSocket(this);
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
     server = new QTcpServer();
+
 
 }
 
@@ -55,16 +57,47 @@ void MainWindow::startServer(){
     qDebug() << "Server started" ;
 }
 
+
+void MainWindow::isConnect()
+{
+    QHostAddress hostAddr(ipNumber);
+    QByteArray readData;
+    socket->connectToHost(hostAddr,portNumber);
+
+    if(socket->waitForConnected(5000)){
+        socket->write(onClickedMessage.toLatin1());
+        socket->waitForBytesWritten(3000);
+
+        onClickedMessage = QString::number(comPortNumber);
+
+        socket->write(onClickedMessage.toLatin1());
+        socket->waitForBytesWritten(3000);
+
+        socket->waitForReadyRead(5000);
+        socket->bytesAvailable();
+        readData = socket->readAll();
+        qDebug() << readData;
+//        qDebug("stop press");
+//        socket->write(onClickedMessage.toLatin1());
+//        socket->waitForBytesWritten(3000);
+    }
+}
+
+void MainWindow::sendData(){
+    socket->write(onClickedMessage.toLatin1());
+    socket->waitForBytesWritten(3000);
+}
+
 void MainWindow::on_startButton_clicked()
 {
     if(isStartButtonClicked == false){
         isStartButtonClicked = true;
         isStopButtonClicked = false;
-        strcpy(onClickedMessage,"message");       
+        onClickedMessage = "x";
         qDebug() << "startButton was clicked";
-
         startTimer();//start timer
-        ui->coordinatBrowser->append("gurol");
+       // ui->coordinatBrowser->append("gurol");
+        ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
         connectionTh->start();
         qDebug() << "signal";
     }
@@ -78,59 +111,53 @@ void MainWindow::on_stopButton_clicked()
         stopTimer();//stop timer
 
         isStopButtonClicked = true;
+        onClickedMessage = "q";
+        sendData();
+        socket->close();
         qDebug() << "stopButton was clicked";
-    }
-}
-
-void MainWindow::isConnect()
-{
-//    qDebug("geldim co");
-//    if(!server->listen(QHostAddress::Any,portNumber)){
-//        qDebug("connection error");
-//    }
-//    else{
-//        qDebug("connection start");
-//    }
-//    qDebug() << portNumber;
-//    while(socket == NULL){
-//        if(server->hasPendingConnections()){
-//            qDebug("has connection");
-//            QTcpSocket *socket = server->nextPendingConnection();
-//            while(socket != NULL){
-//                socket->write("start");
-//                socket->flush();
-//                socket->waitForBytesWritten(30);
-//                socket->waitForReadyRead(30);
-
-//                QByteArray array = socket->readAll();
-//                qDebug(array);
-//            }
-//        }
-//    }
-    QHostAddress hostAddr(ipNumber);
-    socket = new QTcpSocket(this);
-    socket->connectToHost(hostAddr,portNumber);
-
-    if(socket->waitForConnected(5000)){
-        while(!isStopButtonClicked){
-            socket->write("selam");
-            socket->waitForBytesWritten(3000);
-        }
-        qDebug("stop press");
-        socket->write("q");
-        socket->waitForBytesWritten(3000);
     }
 }
 
 void MainWindow::on_portButton_clicked()
 {
     QString temp = ui->portNumberLine->text();
+
     portNumber = temp.toInt();
     qDebug("portNumber: ");
     qDebug() << temp.toLatin1();
     ipNumber = ui->ipNumberLine->text();
     qDebug("ipNumber: ");
     qDebug(ipNumber.toLatin1());
+
+    QString comPort = ui->comPortBox->currentText();
+
+    qDebug(comPort.toLatin1());
+
+    if(comPort.compare("COM1") == 0){
+        comPortNumber = 0;
+    } else if (comPort.compare("COM2") == 0){
+        comPortNumber = 1;
+    } else if (comPort.compare("COM3") == 0){
+        comPortNumber = 2;
+    } else if (comPort.compare("COM4") == 0){
+        comPortNumber = 3;
+    } else if (comPort.compare("COM5") == 0){
+        comPortNumber = 4;
+    } else if (comPort.compare("COM6") == 0){
+        comPortNumber = 5;
+    } else if (comPort.compare("COM7") == 0){
+        comPortNumber = 6;
+    } else if (comPort.compare("COM8") == 0){
+        comPortNumber = 7;
+    } else if (comPort.compare("COM9") == 0){
+        comPortNumber = 8;
+    } else if (comPort.compare("ttyACM0") == 0){
+        comPortNumber = 24;
+    } else if (comPort.compare("ttyACM1") == 0){
+        comPortNumber = 25;
+    }
+    qDebug("comportNumber: ");
+    qDebug() << comPortNumber;
 }
 
 void MainWindow::on_resetButton_clicked()
@@ -143,4 +170,28 @@ void MainWindow::on_resetButton_clicked()
         isResetButtonClicked = false;
      }
 
+}
+
+void MainWindow::on_upButton_clicked()
+{
+    onClickedMessage = "w";
+    sendData();
+}
+
+void MainWindow::on_rightButton_clicked()
+{
+    onClickedMessage = "d";
+    sendData();
+}
+
+void MainWindow::on_leftButton_clicked()
+{
+    onClickedMessage = "a";
+    sendData();
+}
+
+void MainWindow::on_downButton_clicked()
+{
+    onClickedMessage = "s";
+    sendData();
 }

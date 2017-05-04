@@ -29,23 +29,24 @@ public:
     ~MainWindow();
 
 private:
-
     QTimer *timer;
-
-    int countTime=0;
-    QTcpSocket *socket = NULL;    
     QTcpServer *server;
-    char onClickedMessage[64];
+    QTcpSocket *socket = NULL;
+    QString ipNumber;
+    Scene2d *scene2d;
+    Drawer *drawer;
+    int countTime=0;
+    int portNumber;
+    int comPortNumber = -1;
+    QString onClickedMessage;
     bool isStartButtonClicked = false;
     bool isStopButtonClicked = false;
     bool isResetButtonClicked = false;
 
-    Scene2d *scene2d;
-    Drawer *drawer;
-    int portNumber;
-    QString ipNumber;
+
+
 public slots:
-    void isConnect();
+
 
 private slots:
     void on_startButton_clicked();
@@ -56,9 +57,13 @@ private slots:
     void stopTimer();
     void restartTimer();
     void on_portButton_clicked();
-
-
     void on_resetButton_clicked();
+    void on_upButton_clicked();
+    void on_rightButton_clicked();
+    void on_leftButton_clicked();
+    void on_downButton_clicked();
+    void isConnect();
+    void sendData();
 
 private:
     Ui::MainWindow *ui;
