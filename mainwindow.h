@@ -12,8 +12,8 @@
 #include <QTcpServer>
 
 #include "scene2d.h"
-#include "drawer.h"
 #include "connectionthread.h"
+#include "coordinatebrowserth.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ConnectionThread *connectionTh;
+    CoordinateBrowserTh *coorBrowTh;
     ~MainWindow();
 
 private:
@@ -33,8 +34,9 @@ private:
     QTcpServer *server;
     QTcpSocket *socket = NULL;
     QString ipNumber;
-    Scene2d *scene2d;
-    Drawer *drawer;
+    Scene2d *scene2d; //bunu kaldır
+    QTimer timer2d;
+    QMutex mutex;
     int countTime=0;
     int portNumber;
     int comPortNumber = -1;
@@ -64,7 +66,8 @@ private slots:
     void on_downButton_clicked();
     void isConnect();
     void sendData();
-
+    void update2DCoordinates();
+    void updateBrow();
 private:
     Ui::MainWindow *ui;
 

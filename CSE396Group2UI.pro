@@ -26,13 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     scene2d.cpp \
-    drawer.cpp \
-    connectionthread.cpp
+    connectionthread.cpp \
+    coordinatebrowserth.cpp
 
 HEADERS  += mainwindow.h \
     scene2d.h \
-    drawer.h \
-    connectionthread.h
+    connectionthread.h \
+    coordinatebrowserth.h
 
 FORMS    += mainwindow.ui
 

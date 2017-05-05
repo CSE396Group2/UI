@@ -6,16 +6,14 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    drawer = new Drawer(this);
-    ui->graphicsView->setScene(drawer);
+    scene2d = new Scene2d(this);
+    ui->graphicsView->setScene(scene2d);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     connectionTh = new ConnectionThread(this);
     socket = new QTcpSocket(this);
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
+    connect(&timer2d, SIGNAL(timeout()), this, SLOT(update2DCoordinates()));
     server = new QTcpServer();
-
-
 }
 
 MainWindow::~MainWindow()
@@ -63,29 +61,41 @@ void MainWindow::isConnect()
     QHostAddress hostAddr(ipNumber);
     QByteArray readData;
     socket->connectToHost(hostAddr,portNumber);
-
+    coorBrowTh = new CoordinateBrowserTh();
+    connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
     if(socket->waitForConnected(5000)){
+        timer2d.start();
+        timer2d.setInterval(17);
         socket->write(onClickedMessage.toLatin1());
         socket->waitForBytesWritten(3000);
 
         onClickedMessage = QString::number(comPortNumber);
 
         socket->write(onClickedMessage.toLatin1());
-        socket->waitForBytesWritten(3000);
+        socket->waitForBytesWritten(100);
 
-        socket->waitForReadyRead(5000);
-        socket->bytesAvailable();
-        readData = socket->readAll();
-        qDebug() << readData;
-//        qDebug("stop press");
-//        socket->write(onClickedMessage.toLatin1());
-//        socket->waitForBytesWritten(3000);
+        while(!isStopButtonClicked){
+            socket->waitForReadyRead(100);
+            socket->bytesAvailable();
+            readData = socket->readAll();
+            mutex.lock();
+            scene2d->setBoard(123,300);
+            coorBrowTh->start();
+            //qDebug()<< "X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200) ;
+            mutex.unlock();
+            qDebug() << readData;
+        }
     }
 }
 
 void MainWindow::sendData(){
     socket->write(onClickedMessage.toLatin1());
     socket->waitForBytesWritten(3000);
+}
+
+void MainWindow::updateBrow()
+{
+    ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
 }
 
 void MainWindow::on_startButton_clicked()
@@ -97,7 +107,7 @@ void MainWindow::on_startButton_clicked()
         qDebug() << "startButton was clicked";
         startTimer();//start timer
        // ui->coordinatBrowser->append("gurol");
-        ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
+        //ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
         connectionTh->start();
         qDebug() << "signal";
     }
@@ -194,4 +204,8 @@ void MainWindow::on_downButton_clicked()
 {
     onClickedMessage = "s";
     sendData();
+}
+
+void MainWindow::update2DCoordinates(){
+    scene2d->draw();
 }

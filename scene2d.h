@@ -14,9 +14,9 @@ public:
     int getBoardY();
     void setBoard(int x, int y);
     const qreal LEFT_BORDER = 0; //x
-    const qreal RIGHT_BORDER = 150; //x
+    const qreal RIGHT_BORDER = 420; //x
     const qreal TOP_BORDER = 0; //y
-    const qreal BOTTOM_BORDER = 210; //y
+    const qreal BOTTOM_BORDER = 594; //y
     const qreal BALL_RADIUS = 10;
 private:
      qreal collisionX(qreal x);

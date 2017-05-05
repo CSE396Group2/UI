@@ -4,7 +4,6 @@
 Scene2d::Scene2d(QObject *parent):QGraphicsScene(parent)
 {
     this->addRect(LEFT_BORDER, TOP_BORDER,RIGHT_BORDER-LEFT_BORDER,BOTTOM_BORDER-TOP_BORDER);
-    this->addRect(LEFT_BORDER, TOP_BORDER, RIGHT_BORDER-LEFT_BORDER, BOTTOM_BORDER-TOP_BORDER);
 }
 void Scene2d::draw(){
     this->clear();
@@ -59,4 +58,10 @@ qreal Scene2d::collisionY(qreal y){
         return BOTTOM_BORDER - BALL_RADIUS;
 
     return y;
+}
+
+void Scene2d::setBoard(int x, int y)
+{
+    boardX = x;
+    boardY = y;
 }
