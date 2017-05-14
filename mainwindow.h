@@ -67,7 +67,6 @@ private slots:
     void isConnect();
     void sendData();
     void update2DCoordinates();
-    void update2D();
     void updateBrow();
     void realtimeDataSlotFirst();
     void realtimeDataSlotSecond();

@@ -45,17 +45,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(&dataTimerSecond, SIGNAL(timeout()), this, SLOT(realtimeDataSlotSecond()));
     // end x-t y-t graphics
 
+    dataTimerFirst.start();
+    dataTimerSecond.start();
+
     connectionTh = new ConnectionThread(this);
     socket = new QTcpSocket(this);
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
-    connect(&timer2d, SIGNAL(timeout()), this, SLOT(update2DCoordinates()));
     connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
-    connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2D()));
-    //connect(&scene2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
-    scene2dTh->start();
-    coorBrowTh->start();
-    dataTimerFirst.start();
-    dataTimerSecond.start();
+    connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2DCoordinates()));
+    connect(&timer2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
+
     server = new QTcpServer();
 }
 
@@ -121,13 +120,22 @@ void MainWindow::isConnect()
             socket->bytesAvailable();
             readData = socket->readAll();
             mutex.lock();
-            routeX = qrand() % 200;
-            routeY = qrand() % 200;
-
+            routeX = 430;
+            routeY = 600;
+            scene2d->setBoard(routeX,routeY);
+            scene2dTh->start();
+            coorBrowTh->start();
             //qDebug()<< "X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200) ;
             mutex.unlock();
+            if(isStopButtonClicked){
+                qDebug() << "stop button skaldjlds";
+                socket->close();
+                break;
+            }
             qDebug() << readData;
         }
+    }else{
+        qDebug()<< "Connection lost";
     }
 }
 
@@ -141,7 +149,6 @@ void MainWindow::updateBrow()
     ui->coordinatBrowser->append("X:"+QString::number(routeX)+"\tY:"+QString::number(routeY));
 }
 
-
 void MainWindow::realtimeDataSlotFirst() {
     static QTime time(QTime::currentTime());
     // calculate two new data points:
@@ -152,10 +159,6 @@ void MainWindow::realtimeDataSlotFirst() {
     {
         // add data to lines:
         ui->customPlot->graph(0)->addData(key, routeX);
-        //    ui->customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-        // rescale value (vertical) axis to fit the current data:
-        //ui->customPlot->graph(0)->rescaleValueAxis();
-        //ui->customPlot->graph(1)->rescaleValueAxis(true);
         lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
@@ -187,10 +190,6 @@ void MainWindow::realtimeDataSlotSecond() {
     {
         // add data to lines:
         ui->customPlotSecond->graph(0)->addData(key, routeY);
-        //    ui->customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-        // rescale value (vertical) axis to fit the current data:
-        //ui->customPlot->graph(0)->rescaleValueAxis();
-        //ui->customPlot->graph(1)->rescaleValueAxis(true);
         lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
@@ -239,8 +238,6 @@ void MainWindow::on_startButton_clicked()
             ui->rightButton->setDisabled(false);
             ui->leftButton->setDisabled(false);
         }
-       // ui->coordinatBrowser->append("gurol");
-        //ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
         connectionTh->start();
         qDebug() << "signal";
     }
@@ -256,7 +253,6 @@ void MainWindow::on_stopButton_clicked()
         isStopButtonClicked = true;
         onClickedMessage = "q";
         sendData();
-        socket->close();
         qDebug() << "stopButton was clicked";
     }
 }
@@ -306,14 +302,11 @@ void MainWindow::on_portButton_clicked()
 void MainWindow::on_resetButton_clicked()
 {
     if(isResetButtonClicked == false){
-         //  isStopButtonClicked = false;
-          // isStartButtonClicked = false;
-
         restartTimer();//start timer
-        isResetButtonClicked = false;
+        isResetButtonClicked = true;
         isStartButtonClicked = false;
+        isStopButtonClicked = false;
      }
-
 }
 
 void MainWindow::on_upButton_clicked()
@@ -342,9 +335,4 @@ void MainWindow::on_downButton_clicked()
 
 void MainWindow::update2DCoordinates(){
     scene2d->draw();
-}
-
-void MainWindow::update2D()
-{
-    scene2d->setBoard(routeX,routeY);
 }
