@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1285</width>
-    <height>675</height>
+    <width>1495</width>
+    <height>881</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,10 +69,10 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>1010</x>
-      <y>10</y>
+      <x>30</x>
+      <y>420</y>
       <width>261</width>
-      <height>571</height>
+      <height>301</height>
      </rect>
     </property>
     <property name="title">
@@ -121,7 +121,7 @@
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>170</y>
+       <y>110</y>
        <width>80</width>
        <height>31</height>
       </rect>
@@ -138,7 +138,7 @@
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>250</y>
+       <y>190</y>
        <width>80</width>
        <height>31</height>
       </rect>
@@ -155,7 +155,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>210</y>
+       <y>150</y>
        <width>80</width>
        <height>31</height>
       </rect>
@@ -172,7 +172,7 @@
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>210</y>
+       <y>150</y>
        <width>80</width>
        <height>31</height>
       </rect>
@@ -185,23 +185,26 @@
        <normaloff>images/icon-arrow-right.png</normaloff>images/icon-arrow-right.png</iconset>
      </property>
     </widget>
-   </widget>
-   <widget class="QGraphicsView" name="graphicsView">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>10</y>
-      <width>430</width>
-      <height>600</height>
-     </rect>
-    </property>
+    <widget class="QCheckBox" name="auModeCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>90</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Auto Mode</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QFrame" name="frame">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>0</y>
-      <width>351</width>
+      <y>10</y>
+      <width>281</width>
       <height>121</height>
      </rect>
     </property>
@@ -214,8 +217,8 @@
     <widget class="QPushButton" name="portButton">
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>30</y>
+       <x>120</x>
+       <y>80</y>
        <width>80</width>
        <height>22</height>
       </rect>
@@ -229,12 +232,12 @@
       <rect>
        <x>20</x>
        <y>10</y>
-       <width>61</width>
+       <width>71</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Port Label</string>
+      <string>Port </string>
      </property>
     </widget>
     <widget class="QLineEdit" name="portNumberLine">
@@ -275,7 +278,7 @@
       <rect>
        <x>20</x>
        <y>80</y>
-       <width>79</width>
+       <width>81</width>
        <height>22</height>
       </rect>
      </property>
@@ -349,14 +352,102 @@
      </property>
     </widget>
    </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>10</y>
+      <width>481</width>
+      <height>800</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Graphics</string>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>20</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>x-t Graphics</string>
+     </property>
+    </widget>
+    <widget class="QCustomPlot" name="customPlotSecond" native="true">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>400</y>
+       <width>400</width>
+       <height>320</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QCustomPlot" name="customPlot" native="true">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>40</y>
+       <width>400</width>
+       <height>320</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>370</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>91</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>y-t Graphics</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>10</y>
+      <width>451</width>
+      <height>711</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>2D Simulation Area</string>
+    </property>
+    <widget class="QGraphicsView" name="graphicsView">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>430</width>
+       <height>600</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1285</width>
-     <height>19</height>
+     <width>1495</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -371,6 +462,14 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

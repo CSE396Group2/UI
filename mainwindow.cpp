@@ -7,12 +7,55 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     scene2d = new Scene2d(this);
+    coorBrowTh = new CoordinateBrowserTh(this);
+    scene2dTh = new Scene2dTh(this);
     ui->graphicsView->setScene(scene2d);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->auModeCheckBox->setCheckable(true);
+
+    //x-t, y-t graphics
+    ui->customPlot->addGraph(); // blue line
+    ui->customPlot->addGraph(); // red line
+    ui->customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+    ui->customPlot->graph(1)->setPen(QPen(QColor(255, 110, 40)));
+    ui->customPlotSecond->addGraph(); // blue line
+    ui->customPlotSecond->addGraph(); // red line
+    ui->customPlotSecond->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+    ui->customPlotSecond->graph(1)->setPen(QPen(QColor(255, 110, 40)));
+
+    QSharedPointer <QCPAxisTickerTime> timeTickerFirst(new QCPAxisTickerTime);
+    QSharedPointer <QCPAxisTickerTime> timeTickerSecond(new QCPAxisTickerTime);
+    timeTickerFirst->setTimeFormat("%h:%m:%s");
+    timeTickerSecond->setTimeFormat("%h:%m:%s");
+    ui->customPlot->xAxis->setTicker(timeTickerFirst);
+    ui->customPlotSecond->xAxis->setTicker(timeTickerSecond);
+    ui->customPlot->axisRect()->setupFullAxesBox();
+    ui->customPlotSecond->axisRect()->setupFullAxesBox();
+    ui->customPlot->yAxis->setRange(0, 1023);
+    ui->customPlotSecond->yAxis->setRange(0, 800);
+
+    connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(ui->customPlotSecond->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlotSecond->xAxis2,
+            SLOT(setRange(QCPRange)));
+    connect(ui->customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->yAxis2, SLOT(setRange(QCPRange)));
+    connect(ui->customPlotSecond->yAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlotSecond->yAxis2,
+            SLOT(setRange(QCPRange)));
+
+    connect(&dataTimerFirst, SIGNAL(timeout()), this, SLOT(realtimeDataSlotFirst()));
+    connect(&dataTimerSecond, SIGNAL(timeout()), this, SLOT(realtimeDataSlotSecond()));
+    // end x-t y-t graphics
+
     connectionTh = new ConnectionThread(this);
     socket = new QTcpSocket(this);
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
     connect(&timer2d, SIGNAL(timeout()), this, SLOT(update2DCoordinates()));
+    connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
+    connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2D()));
+    //connect(&scene2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
+    scene2dTh->start();
+    coorBrowTh->start();
+    dataTimerFirst.start();
+    dataTimerSecond.start();
     server = new QTcpServer();
 }
 
@@ -61,8 +104,7 @@ void MainWindow::isConnect()
     QHostAddress hostAddr(ipNumber);
     QByteArray readData;
     socket->connectToHost(hostAddr,portNumber);
-    coorBrowTh = new CoordinateBrowserTh();
-    connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
+
     if(socket->waitForConnected(5000)){
         timer2d.start();
         timer2d.setInterval(17);
@@ -79,8 +121,9 @@ void MainWindow::isConnect()
             socket->bytesAvailable();
             readData = socket->readAll();
             mutex.lock();
-            scene2d->setBoard(123,300);
-            coorBrowTh->start();
+            routeX = qrand() % 200;
+            routeY = qrand() % 200;
+
             //qDebug()<< "X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200) ;
             mutex.unlock();
             qDebug() << readData;
@@ -95,8 +138,81 @@ void MainWindow::sendData(){
 
 void MainWindow::updateBrow()
 {
-    ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
+    ui->coordinatBrowser->append("X:"+QString::number(routeX)+"\tY:"+QString::number(routeY));
 }
+
+
+void MainWindow::realtimeDataSlotFirst() {
+    static QTime time(QTime::currentTime());
+    // calculate two new data points:
+    double key = time.elapsed() / 1000.0; // time elapsed since start of demo, in seconds
+
+    static double lastPointKey = 0;
+    if (key - lastPointKey > 0.5) // at most add point every 2 ms
+    {
+        // add data to lines:
+        ui->customPlot->graph(0)->addData(key, routeX);
+        //    ui->customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+        // rescale value (vertical) axis to fit the current data:
+        //ui->customPlot->graph(0)->rescaleValueAxis();
+        //ui->customPlot->graph(1)->rescaleValueAxis(true);
+        lastPointKey = key;
+    }
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->customPlot->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->customPlot->replot();
+
+    // calculate frames per second:
+    static double lastFpsKey;
+    static int frameCount;
+    ++frameCount;
+    if (key - lastFpsKey > 2) // average fps over 2 seconds
+    {
+        ui->statusBar->showMessage(
+                QString("%1 FPS, Total Data points: %2")
+                        .arg(frameCount / (key - lastFpsKey), 0, 'f', 0)
+                        .arg(ui->customPlot->graph(0)->data()->size()/*ui->customPlot->graph(1)->data()->size()*/), 0);
+        lastFpsKey = key;
+        frameCount = 0;
+    }
+}
+
+void MainWindow::realtimeDataSlotSecond() {
+    static QTime time(QTime::currentTime());
+    // calculate two new data points:
+    double key = time.elapsed() / 1000.0; // time elapsed since start of demo, in seconds
+
+    static double lastPointKey = 0;
+    if (key - lastPointKey > 0.5) // at most add point every 2 ms
+    {
+        // add data to lines:
+        ui->customPlotSecond->graph(0)->addData(key, routeY);
+        //    ui->customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+        // rescale value (vertical) axis to fit the current data:
+        //ui->customPlot->graph(0)->rescaleValueAxis();
+        //ui->customPlot->graph(1)->rescaleValueAxis(true);
+        lastPointKey = key;
+    }
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->customPlotSecond->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->customPlotSecond->replot();
+
+    // calculate frames per second:
+    static double lastFpsKey;
+    static int frameCount;
+    ++frameCount;
+    if (key - lastFpsKey > 2) // average fps over 2 seconds
+    {
+        ui->statusBar->showMessage(
+                QString("%1 FPS, Total Data points: %2")
+                        .arg(frameCount / (key - lastFpsKey), 0, 'f', 0)
+                        .arg(ui->customPlotSecond->graph(
+                                0)->data()->size()/*ui->customPlot->graph(1)->data()->size()*/), 0);
+        lastFpsKey = key;
+        frameCount = 0;
+    }
+}
+
 
 void MainWindow::on_startButton_clicked()
 {
@@ -106,6 +222,23 @@ void MainWindow::on_startButton_clicked()
         onClickedMessage = "x";
         qDebug() << "startButton was clicked";
         startTimer();//start timer
+        if(ui->auModeCheckBox->isChecked()){
+            qDebug() << "true";
+            ui->auModeCheckBox->setChecked(true);
+            autoMode = true;
+            ui->upButton->setDisabled(true);
+            ui->downButton->setDisabled(true);
+            ui->rightButton->setDisabled(true);
+            ui->leftButton->setDisabled(true);
+        }else {
+            qDebug() << "false";
+            ui->auModeCheckBox->setChecked(false);
+            autoMode = false;
+            ui->upButton->setDisabled(false);
+            ui->downButton->setDisabled(false);
+            ui->rightButton->setDisabled(false);
+            ui->leftButton->setDisabled(false);
+        }
        // ui->coordinatBrowser->append("gurol");
         //ui->coordinatBrowser->append("X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200));
         connectionTh->start();
@@ -178,6 +311,7 @@ void MainWindow::on_resetButton_clicked()
 
         restartTimer();//start timer
         isResetButtonClicked = false;
+        isStartButtonClicked = false;
      }
 
 }
@@ -208,4 +342,9 @@ void MainWindow::on_downButton_clicked()
 
 void MainWindow::update2DCoordinates(){
     scene2d->draw();
+}
+
+void MainWindow::update2D()
+{
+    scene2d->setBoard(routeX,routeY);
 }
