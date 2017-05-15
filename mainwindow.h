@@ -46,8 +46,10 @@ private:
     int countTime=0;
     int portNumber;
     int comPortNumber = -1;
-    int routeX;
-    int routeY;
+    int routeX = 0;
+    int routeY = 0;
+    int rotation = 0;
+    bool isFound = false;
     bool autoMode;
     bool isStartButtonClicked = false;
     bool isStopButtonClicked = false;

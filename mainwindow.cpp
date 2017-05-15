@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene2d = new Scene2d(this);
     coorBrowTh = new CoordinateBrowserTh(this);
     scene2dTh = new Scene2dTh(this);
+
     ui->graphicsView->setScene(scene2d);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->auModeCheckBox->setCheckable(true);
@@ -100,8 +101,11 @@ void MainWindow::startServer(){
 
 void MainWindow::isConnect()
 {
-    QHostAddress hostAddr(ipNumber);
+    //QHostAddress hostAddr(ipNumber);
+    QHostAddress hostAddr("192.168.43.187");
     QByteArray readData;
+    char* stringData;
+    char param[3];
     socket->connectToHost(hostAddr,portNumber);
 
     if(socket->waitForConnected(5000)){
@@ -116,23 +120,42 @@ void MainWindow::isConnect()
         socket->waitForBytesWritten(100);
 
         while(!isStopButtonClicked){
-            socket->waitForReadyRead(100);
+            socket->waitForReadyRead(3000);
             socket->bytesAvailable();
             readData = socket->readAll();
+            stringData = readData.data();
             mutex.lock();
-            routeX = 430;
-            routeY = 600;
+            qDebug() <<"stringData: "<< stringData << endl;
+
+            strcpy(param,strtok(stringData," ,"));
+            routeX = atoi(param);
+
+            strcpy(param,strtok(NULL," ,"));
+            routeY = atoi(param);
+
+            strcpy(param,strtok(NULL," ,"));
+
+            if(strcmp(param,"t") == 0){
+                isFound = true;
+            }else if(strcmp(param,"f") == 0){
+                isFound = false;
+            }else {
+                qDebug() << "Invalid value" << endl;
+            }
+
+            strcpy(param,strtok(NULL," ,"));
+            rotation = atoi(param);
+
+            qDebug() << "routeX:-" << routeX << "routeY: " << routeY << "isFound: " << isFound << "rotaion: " << rotation <<"-" << endl;
             scene2d->setBoard(routeX,routeY);
             scene2dTh->start();
             coorBrowTh->start();
-            //qDebug()<< "X:"+QString::number(qrand()%200)+"\tY:"+QString::number(qrand()%200) ;
             mutex.unlock();
             if(isStopButtonClicked){
                 qDebug() << "stop button skaldjlds";
                 socket->close();
                 break;
             }
-            qDebug() << readData;
         }
     }else{
         qDebug()<< "Connection lost";

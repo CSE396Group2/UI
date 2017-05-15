@@ -12,8 +12,8 @@ void Scene2d::draw(){
     QPen camPen(Qt::red);
     QBrush camBrush(Qt::blue);
 
-    qreal x = coordinateToPositionX(getBoardX());
-    qreal y = coordinateToPositionY(getBoardY());
+    qreal x = getBoardX();
+    qreal y = getBoardY();
     this->addEllipse(collisionX(x)-BALL_RADIUS,collisionY(y)-BALL_RADIUS,2*BALL_RADIUS,2*BALL_RADIUS,camPen,camBrush);
     QString coordinates = QString("X: ") + QString::number(getBoardX()) + QString(" Y: ") + QString::number(getBoardY());
     this->addText(coordinates);
