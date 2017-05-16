@@ -101,8 +101,8 @@ void MainWindow::startServer(){
 
 void MainWindow::isConnect()
 {
-    //QHostAddress hostAddr(ipNumber);
-    QHostAddress hostAddr("192.168.43.187");
+    QHostAddress hostAddr(ipNumber);
+    //QHostAddress hostAddr("192.168.43.187");
     QByteArray readData;
     char* stringData;
     char param[3];
@@ -119,44 +119,46 @@ void MainWindow::isConnect()
         socket->write(onClickedMessage.toLatin1());
         socket->waitForBytesWritten(100);
 
-        while(!isStopButtonClicked){
-            socket->waitForReadyRead(3000);
-            socket->bytesAvailable();
-            readData = socket->readAll();
-            stringData = readData.data();
-            mutex.lock();
-            qDebug() <<"stringData: "<< stringData << endl;
+//        while(!isStopButtonClicked){
+//            socket->waitForReadyRead(100);
+//            socket->bytesAvailable();
+//            readData = socket->readAll();
+//            stringData = readData.data();
+//            if(strcmp(stringData," ") != 0 && strcmp(stringData,"xxx") != 0){
+//                mutex.lock();
+//                qDebug() <<"stringData: "<< stringData << endl;
 
-            strcpy(param,strtok(stringData," ,"));
-            routeX = atoi(param);
+//                strcpy(param,strtok(stringData," ,"));
+//                routeX = atoi(param);
 
-            strcpy(param,strtok(NULL," ,"));
-            routeY = atoi(param);
+//                strcpy(param,strtok(NULL," ,"));
+//                routeY = atoi(param);
 
-            strcpy(param,strtok(NULL," ,"));
+//                strcpy(param,strtok(NULL," ,"));
 
-            if(strcmp(param,"t") == 0){
-                isFound = true;
-            }else if(strcmp(param,"f") == 0){
-                isFound = false;
-            }else {
-                qDebug() << "Invalid value" << endl;
-            }
+//                if(strcmp(param,"t") == 0){
+//                    isFound = true;
+//                }else if(strcmp(param,"f") == 0){
+//                    isFound = false;
+//                }else {
+//                    qDebug() << "Invalid value" << endl;
+//                }
 
-            strcpy(param,strtok(NULL," ,"));
-            rotation = atoi(param);
+//                strcpy(param,strtok(NULL," ,"));
+//                rotation = atoi(param);
 
-            qDebug() << "routeX:-" << routeX << "routeY: " << routeY << "isFound: " << isFound << "rotaion: " << rotation <<"-" << endl;
-            scene2d->setBoard(routeX,routeY);
-            scene2dTh->start();
-            coorBrowTh->start();
-            mutex.unlock();
-            if(isStopButtonClicked){
-                qDebug() << "stop button skaldjlds";
-                socket->close();
-                break;
-            }
-        }
+//                qDebug() << "routeX:-" << routeX << "routeY: " << routeY << "isFound: " << isFound << "rotaion: " << rotation <<"-" << endl;
+//                scene2d->setBoard(routeX,routeY);
+//                scene2dTh->start();
+//                coorBrowTh->start();
+//                mutex.unlock();
+//                if(isStopButtonClicked){
+//                    qDebug() << "stop button skaldjlds";
+//                    socket->close();
+//                    break;
+//                }
+//            }
+//        }
     }else{
         qDebug()<< "Connection lost";
     }
@@ -164,6 +166,7 @@ void MainWindow::isConnect()
 
 void MainWindow::sendData(){
     socket->write(onClickedMessage.toLatin1());
+    qDebug() << "sent data: " <<onClickedMessage.toLatin1()<< endl;
     socket->waitForBytesWritten(3000);
 }
 
@@ -241,6 +244,7 @@ void MainWindow::on_startButton_clicked()
     if(isStartButtonClicked == false){
         isStartButtonClicked = true;
         isStopButtonClicked = false;
+        isResetButtonClicked = false;
         onClickedMessage = "x";
         qDebug() << "startButton was clicked";
         startTimer();//start timer
