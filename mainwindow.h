@@ -15,7 +15,6 @@
 #include "connectionthread.h"
 #include "coordinatebrowserth.h"
 #include "scene2dth.h"
-#include "icsrulerwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,13 +37,13 @@ private:
     QTcpServer *server;
     QTcpSocket *socket = NULL;
     QString ipNumber;
-    Scene2d *scene2d; //bunu kaldır
+    Scene2d *scene2d;
     QTimer timer2d;
     QTimer dataTimerFirst;
     QTimer dataTimerSecond;
     QMutex mutex;
     QString onClickedMessage;
-    ICSRulerWidget ruller;
+
     int countTime=0;
     int portNumber;
     int comPortNumber = -1;

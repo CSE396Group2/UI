@@ -10,12 +10,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     coorBrowTh = new CoordinateBrowserTh(this);
     scene2dTh = new Scene2dTh(this);
 
-    ui->graphicsView->
     ui->graphicsView->setScene(scene2d);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->auModeCheckBox->setCheckable(true);
 
-    ui->picLabel->setPixmap(QPixmap(":/images/cino.png"));
+    ui->picLabel->setPixmap(QPixmap(":/images/cin2.bmp"));
 
     //x-t, y-t graphics
     ui->customPlot->addGraph(); // blue line
@@ -35,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->customPlotSecond->xAxis->setTicker(timeTickerSecond);
     ui->customPlot->axisRect()->setupFullAxesBox();
     ui->customPlotSecond->axisRect()->setupFullAxesBox();
-    ui->customPlot->yAxis->setRange(0, 1023);
-    ui->customPlotSecond->yAxis->setRange(0, 800);
+    ui->customPlot->yAxis->setRange(0, 700);
+    ui->customPlotSecond->yAxis->setRange(0, 700);
 
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(ui->customPlotSecond->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlotSecond->xAxis2,
@@ -49,8 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(&dataTimerSecond, SIGNAL(timeout()), this, SLOT(realtimeDataSlotSecond()));
     // end x-t y-t graphics
 
-    dataTimerFirst.start();
-    dataTimerSecond.start();
+
 
     connectionTh = new ConnectionThread(this);
     socket = new QTcpSocket(this);
@@ -58,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
     connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2DCoordinates()));
     rotatePic(rotation);
-    //connect(&timer2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
 
     server = new QTcpServer();
 }
@@ -111,7 +108,7 @@ void MainWindow::isConnect()
     char* stringData;
     char param[3];
     socket->connectToHost(hostAddr,portNumber);
-    rotatePic(185);
+
     if(socket->waitForConnected(5000)){
         timer2d.start();
         timer2d.setInterval(17);
@@ -120,13 +117,22 @@ void MainWindow::isConnect()
 
         socket->write(onClickedMessage.toLatin1()); // send comport number
         socket->waitForBytesWritten(100);
+        if(!autoMode){// manual mode
+            onClickedMessage = "m";
+
+        }else {
+            onClickedMessage = "a";
+        }
+
+        socket->write(onClickedMessage.toLatin1());
+        socket->waitForBytesWritten(100);
 
         socket->waitForReadyRead(100);
         socket->bytesAvailable();
         readData = socket->readAll();
         stringData = readData.data();
 
-        qDebug() << "stringData might be p: " << stringData<< endl;
+        qDebug() << "stringData might be p or f: " << stringData<< endl;
 
         if(strcmp(stringData,"f") == 0){
             qDebug()<< "comport error" << endl;
@@ -241,7 +247,7 @@ void MainWindow::rotatePic(int angle){
 
        QApplication::processEvents();
 
-       QPixmap ship(":/images/cino.png");
+       QPixmap ship(":/images/cin2.bmp");
        QPixmap rotate(ship.size());
 
        angle =360-angle;
@@ -306,6 +312,8 @@ void MainWindow::on_startButton_clicked()
         isResetButtonClicked = false;
         qDebug() << "startButton was clicked";
         startTimer();//start timer
+        dataTimerFirst.start();
+        dataTimerSecond.start();
         if(ui->auModeCheckBox->isChecked()){
             qDebug() << "true";
             ui->auModeCheckBox->setChecked(true);
@@ -326,6 +334,10 @@ void MainWindow::on_startButton_clicked()
         connectionTh->start();
         qDebug() << "signal";
     }
+    ui->comPortBox->setDisabled(true);
+    ui->ipNumberLine->setDisabled(true);
+    ui->portButton->setDisabled(true);
+    ui->comPortBox->setDisabled(true);
 }
 
 void MainWindow::on_stopButton_clicked()
@@ -339,6 +351,13 @@ void MainWindow::on_stopButton_clicked()
         onClickedMessage = "q";
         sendData();
         //socket->close();
+        ui->comPortBox->setEnabled(true);
+        ui->ipNumberLine->setEnabled(true);
+        ui->portButton->setEnabled(true);
+        ui->comPortBox->setEnabled(true);
+        dataTimerFirst.stop();
+        dataTimerSecond.stop();
+
         qDebug() << "stopButton was clicked";
     }
 }

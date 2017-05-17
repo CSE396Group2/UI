@@ -29,16 +29,14 @@ SOURCES += main.cpp\
     connectionthread.cpp \
     coordinatebrowserth.cpp \
     qcustomplot.cpp \
-    scene2dth.cpp \
-    icsrulerwidget.cpp
+    scene2dth.cpp
 
 HEADERS  += mainwindow.h \
     scene2d.h \
     connectionthread.h \
     coordinatebrowserth.h \
     qcustomplot.h \
-    scene2dth.h \
-    icsrulerwidget.h
+    scene2dth.h
 
 FORMS    += mainwindow.ui
 

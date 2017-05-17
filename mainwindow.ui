@@ -13,6 +13,12 @@
     <height>1056</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>1408</width>
+    <height>1056</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -440,20 +446,20 @@
    <widget class="QGraphicsView" name="picGraphicsView">
     <property name="geometry">
      <rect>
-      <x>1140</x>
-      <y>27</y>
-      <width>256</width>
-      <height>192</height>
+      <x>952</x>
+      <y>615</y>
+      <width>410</width>
+      <height>364</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="picLabel">
     <property name="geometry">
      <rect>
-      <x>1148</x>
-      <y>43</y>
-      <width>231</width>
-      <height>161</height>
+      <x>960</x>
+      <y>620</y>
+      <width>391</width>
+      <height>351</height>
      </rect>
     </property>
     <property name="text">
