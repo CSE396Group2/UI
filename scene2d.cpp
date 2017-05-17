@@ -10,7 +10,7 @@ void Scene2d::draw(){
     this->addRect(LEFT_BORDER, TOP_BORDER,RIGHT_BORDER-LEFT_BORDER,BOTTOM_BORDER-TOP_BORDER);
 
     QPen camPen(Qt::red);
-    QBrush camBrush(Qt::blue);
+    QBrush camBrush(Qt::red);
 
     qreal x = getBoardX();
     qreal y = getBoardY();

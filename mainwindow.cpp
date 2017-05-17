@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
     connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
     connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2DCoordinates()));
-    connect(&timer2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
+    //connect(&timer2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
 
     server = new QTcpServer();
 }
@@ -111,54 +111,80 @@ void MainWindow::isConnect()
     if(socket->waitForConnected(5000)){
         timer2d.start();
         timer2d.setInterval(17);
-        socket->write(onClickedMessage.toLatin1());
-        socket->waitForBytesWritten(3000);
 
         onClickedMessage = QString::number(comPortNumber);
 
-        socket->write(onClickedMessage.toLatin1());
+        socket->write(onClickedMessage.toLatin1()); // send comport number
         socket->waitForBytesWritten(100);
 
-//        while(!isStopButtonClicked){
-//            socket->waitForReadyRead(100);
-//            socket->bytesAvailable();
-//            readData = socket->readAll();
-//            stringData = readData.data();
-//            if(strcmp(stringData," ") != 0 && strcmp(stringData,"xxx") != 0){
-//                mutex.lock();
-//                qDebug() <<"stringData: "<< stringData << endl;
+        socket->waitForReadyRead(100);
+        socket->bytesAvailable();
+        readData = socket->readAll();
+        stringData = readData.data();
 
-//                strcpy(param,strtok(stringData," ,"));
-//                routeX = atoi(param);
+        qDebug() << "stringData might be p: " << stringData<< endl;
 
-//                strcpy(param,strtok(NULL," ,"));
-//                routeY = atoi(param);
-
-//                strcpy(param,strtok(NULL," ,"));
-
-//                if(strcmp(param,"t") == 0){
-//                    isFound = true;
-//                }else if(strcmp(param,"f") == 0){
-//                    isFound = false;
-//                }else {
-//                    qDebug() << "Invalid value" << endl;
-//                }
-
-//                strcpy(param,strtok(NULL," ,"));
-//                rotation = atoi(param);
-
-//                qDebug() << "routeX:-" << routeX << "routeY: " << routeY << "isFound: " << isFound << "rotaion: " << rotation <<"-" << endl;
-//                scene2d->setBoard(routeX,routeY);
-//                scene2dTh->start();
-//                coorBrowTh->start();
-//                mutex.unlock();
-//                if(isStopButtonClicked){
-//                    qDebug() << "stop button skaldjlds";
-//                    socket->close();
-//                    break;
-//                }
+        if(strcmp(stringData,"f") == 0){
+            qDebug()<< "comport error" << endl;
+//            if(comPortNumber == 24){
+//                socket->write(25);
+//                socket->waitForBytesWritten(100);
+//            }else if (comPortNumber == 25){
+//                socket->write(24);
+//                socket->waitForBytesWritten(100);
 //            }
-//        }
+        }else {
+            onClickedMessage = 'p';
+            qDebug()<< "***********************************************" <<endl;
+            socket->write(onClickedMessage.toLatin1());
+            socket->waitForBytesWritten(100);
+
+            while(!isStopButtonClicked){
+                socket->waitForReadyRead(100); //waiting data
+                socket->bytesAvailable();
+                readData = socket->readAll();
+                stringData = readData.data(); //data format = routeX,routeY,isFound,rotation
+
+                qDebug()<< "sizeof: " << strlen(stringData) << endl;
+                qDebug() <<"stringData: "<< stringData << endl;
+
+                if( strlen(stringData) == 13 ){
+                    mutex.lock();
+                    try{
+                        strcpy(param,strtok(stringData," ,"));
+                        routeX = atoi(param);
+                        strcpy(param,strtok(NULL," ,"));
+                        routeY = atoi(param);
+
+                        strcpy(param,strtok(NULL," ,"));
+
+                        if(strcmp(param,"t") == 0){
+                            isFound = true;
+                        }else if(strcmp(param,"f") == 0){
+                            isFound = false;
+                        }else {
+                            qDebug() << "Invalid value" << endl;
+                        }
+
+                        strcpy(param,strtok(NULL," ,"));
+                        rotation = atoi(param);
+                    }catch(...){
+                        qDebug()<< "parse error" << endl;
+                    }
+
+                    qDebug() << "routeX:-" << routeX << "routeY: " << routeY << "isFound: " << isFound << "rotaion: " << rotation <<"-" << endl;
+                    scene2d->setBoard(routeX,routeY);
+                    scene2dTh->start();
+                    coorBrowTh->start();
+                    mutex.unlock();
+                    if(isStopButtonClicked){
+                        qDebug() << "stop button skaldjlds";
+                        socket->close();
+                        break;
+                    }
+                }
+            }
+        }
     }else{
         qDebug()<< "Connection lost";
     }
@@ -245,7 +271,6 @@ void MainWindow::on_startButton_clicked()
         isStartButtonClicked = true;
         isStopButtonClicked = false;
         isResetButtonClicked = false;
-        onClickedMessage = "x";
         qDebug() << "startButton was clicked";
         startTimer();//start timer
         if(ui->auModeCheckBox->isChecked()){
@@ -280,6 +305,7 @@ void MainWindow::on_stopButton_clicked()
         isStopButtonClicked = true;
         onClickedMessage = "q";
         sendData();
+        //socket->close();
         qDebug() << "stopButton was clicked";
     }
 }
