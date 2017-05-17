@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1281</width>
-    <height>920</height>
+    <width>1408</width>
+    <height>1056</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,18 +24,15 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>140</y>
+      <y>157</y>
       <width>280</width>
-      <height>263</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="title">
      <string>Coordinates of Camera</string>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QTextBrowser" name="coordinatBrowser"/>
-     </item>
      <item>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
@@ -69,9 +66,9 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>420</y>
-      <width>261</width>
+      <x>20</x>
+      <y>267</y>
+      <width>281</width>
       <height>231</height>
      </rect>
     </property>
@@ -203,7 +200,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>10</y>
+      <y>27</y>
       <width>281</width>
       <height>121</height>
      </rect>
@@ -355,10 +352,10 @@
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>10</y>
-      <width>481</width>
-      <height>800</height>
+      <x>30</x>
+      <y>597</y>
+      <width>901</width>
+      <height>381</height>
      </rect>
     </property>
     <property name="title">
@@ -377,16 +374,6 @@
       <string>x-t Graphics</string>
      </property>
     </widget>
-    <widget class="QCustomPlot" name="customPlotSecond" native="true">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>400</y>
-       <width>400</width>
-       <height>320</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QCustomPlot" name="customPlot" native="true">
      <property name="geometry">
       <rect>
@@ -400,8 +387,8 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>370</y>
+       <x>630</x>
+       <y>20</y>
        <width>91</width>
        <height>16</height>
       </rect>
@@ -416,14 +403,24 @@
       <string>y-t Graphics</string>
      </property>
     </widget>
+    <widget class="QCustomPlot" name="customPlotSecond" native="true">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>40</y>
+       <width>400</width>
+       <height>320</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>10</y>
-      <width>451</width>
-      <height>641</height>
+      <x>320</x>
+      <y>7</y>
+      <width>761</width>
+      <height>551</height>
      </rect>
     </property>
     <property name="title">
@@ -434,11 +431,34 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>430</width>
-       <height>600</height>
+       <width>741</width>
+       <height>511</height>
       </rect>
      </property>
     </widget>
+   </widget>
+   <widget class="QGraphicsView" name="picGraphicsView">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>27</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="picLabel">
+    <property name="geometry">
+     <rect>
+      <x>1148</x>
+      <y>43</y>
+      <width>231</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -446,8 +466,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1281</width>
-     <height>20</height>
+     <width>1408</width>
+     <height>19</height>
     </rect>
    </property>
   </widget>

@@ -15,6 +15,7 @@
 #include "connectionthread.h"
 #include "coordinatebrowserth.h"
 #include "scene2dth.h"
+#include "icsrulerwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,7 @@ private:
     QTimer dataTimerSecond;
     QMutex mutex;
     QString onClickedMessage;
+    ICSRulerWidget ruller;
     int countTime=0;
     int portNumber;
     int comPortNumber = -1;
@@ -55,8 +57,9 @@ private:
     bool isStopButtonClicked = false;
     bool isResetButtonClicked = false;
 
-public slots:
 
+public slots:
+    void rotatePic(int angle);
 
 private slots:
     void on_startButton_clicked();

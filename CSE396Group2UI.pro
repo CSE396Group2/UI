@@ -29,15 +29,20 @@ SOURCES += main.cpp\
     connectionthread.cpp \
     coordinatebrowserth.cpp \
     qcustomplot.cpp \
-    scene2dth.cpp
+    scene2dth.cpp \
+    icsrulerwidget.cpp
 
 HEADERS  += mainwindow.h \
     scene2d.h \
     connectionthread.h \
     coordinatebrowserth.h \
     qcustomplot.h \
-    scene2dth.h
+    scene2dth.h \
+    icsrulerwidget.h
 
 FORMS    += mainwindow.ui
 
 QMAKE_CXXFLAGS += -std=gnu++14
+
+RESOURCES += \
+    images.qrc

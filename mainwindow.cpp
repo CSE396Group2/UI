@@ -10,9 +10,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     coorBrowTh = new CoordinateBrowserTh(this);
     scene2dTh = new Scene2dTh(this);
 
+    ui->graphicsView->
     ui->graphicsView->setScene(scene2d);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->auModeCheckBox->setCheckable(true);
+
+    ui->picLabel->setPixmap(QPixmap(":/images/cino.png"));
 
     //x-t, y-t graphics
     ui->customPlot->addGraph(); // blue line
@@ -54,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
     connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
     connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2DCoordinates()));
+    rotatePic(rotation);
     //connect(&timer2d,SIGNAL(timeout()),this,SLOT(update2DSscene()));
 
     server = new QTcpServer();
@@ -107,7 +111,7 @@ void MainWindow::isConnect()
     char* stringData;
     char param[3];
     socket->connectToHost(hostAddr,portNumber);
-
+    rotatePic(185);
     if(socket->waitForConnected(5000)){
         timer2d.start();
         timer2d.setInterval(17);
@@ -168,6 +172,7 @@ void MainWindow::isConnect()
 
                         strcpy(param,strtok(NULL," ,"));
                         rotation = atoi(param);
+                        rotatePic(rotation);
                     }catch(...){
                         qDebug()<< "parse error" << endl;
                     }
@@ -198,7 +203,7 @@ void MainWindow::sendData(){
 
 void MainWindow::updateBrow()
 {
-    ui->coordinatBrowser->append("X:"+QString::number(routeX)+"\tY:"+QString::number(routeY));
+    //ui->coordinatBrowser->append("X:"+QString::number(routeX)+"\tY:"+QString::number(routeY));
 }
 
 void MainWindow::realtimeDataSlotFirst() {
@@ -230,6 +235,34 @@ void MainWindow::realtimeDataSlotFirst() {
         lastFpsKey = key;
         frameCount = 0;
     }
+}
+
+void MainWindow::rotatePic(int angle){
+
+       QApplication::processEvents();
+
+       QPixmap ship(":/images/cino.png");
+       QPixmap rotate(ship.size());
+
+       angle =360-angle;
+
+
+       QPainter p(&rotate);
+       p.setRenderHint(QPainter::Antialiasing);
+       p.setRenderHint(QPainter::SmoothPixmapTransform);
+       p.setRenderHint(QPainter::HighQualityAntialiasing);
+       p.translate(rotate.size().width() / 2, rotate.size().height() / 2);
+       p.rotate(angle);
+       p.translate(-rotate.size().width() / 2, -rotate.size().height() / 2);
+
+       p.drawPixmap(0, 0, ship);
+       p.end();
+
+       ui->picLabel->setPixmap(rotate);
+
+       //couner++;
+     // rotate
+
 }
 
 void MainWindow::realtimeDataSlotSecond() {
@@ -389,3 +422,4 @@ void MainWindow::on_downButton_clicked()
 void MainWindow::update2DCoordinates(){
     scene2d->draw();
 }
+

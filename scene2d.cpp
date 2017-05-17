@@ -1,6 +1,7 @@
 #include "scene2d.h"
 #include <QGraphicsSceneMouseEvent>
 
+
 Scene2d::Scene2d(QObject *parent):QGraphicsScene(parent)
 {
     this->addRect(LEFT_BORDER, TOP_BORDER,RIGHT_BORDER-LEFT_BORDER,BOTTOM_BORDER-TOP_BORDER);
@@ -12,8 +13,8 @@ void Scene2d::draw(){
     QPen camPen(Qt::red);
     QBrush camBrush(Qt::red);
 
-    qreal x = getBoardX();
-    qreal y = getBoardY();
+    qreal x = getBoardX(); // long side
+    qreal y = getBoardY(); // short side
     this->addEllipse(collisionX(x)-BALL_RADIUS,collisionY(y)-BALL_RADIUS,2*BALL_RADIUS,2*BALL_RADIUS,camPen,camBrush);
     QString coordinates = QString("X: ") + QString::number(getBoardX()) + QString(" Y: ") + QString::number(getBoardY());
     this->addText(coordinates);
@@ -29,14 +30,14 @@ int Scene2d::getBoardY(){
 
 qreal Scene2d::coordinateToPositionX(int x)
 {
-    const qreal X_MAX = 1000;
+    const qreal X_MAX = 630; //long side
     //return (x-LEFT_BORDER)*(RIGHT_BORDER-LEFT_BORDER)/X_MAX;
     return LEFT_BORDER + x*(RIGHT_BORDER-LEFT_BORDER)/X_MAX;
 }
 
 qreal Scene2d::coordinateToPositionY(int y)
 {
-    const qreal Y_MAX = 1000;
+    const qreal Y_MAX = 444; //short side
     //return (y-TOP_BORDER)*(BOTTOM_BORDER-TOP_BORDER)/Y_MAX;
     return TOP_BORDER + y*(BOTTOM_BORDER-TOP_BORDER)/Y_MAX;
 }

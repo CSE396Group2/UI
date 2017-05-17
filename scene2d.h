@@ -9,14 +9,15 @@ class Scene2d:public QGraphicsScene
 {
 public:
     Scene2d(QObject *parent = 0);
+    QPainter painter;
     void draw();
     int getBoardX();
     int getBoardY();
     void setBoard(int x, int y);
     const qreal LEFT_BORDER = 0; //x
-    const qreal RIGHT_BORDER = 420; //x
+    const qreal RIGHT_BORDER = 630; //x
     const qreal TOP_BORDER = 0; //y
-    const qreal BOTTOM_BORDER = 594; //y
+    const qreal BOTTOM_BORDER = 444; //y
     const qreal BALL_RADIUS = 10;
 private:
      qreal collisionX(qreal x);
