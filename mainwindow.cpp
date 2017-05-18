@@ -102,7 +102,6 @@ void MainWindow::startServer(){
 void MainWindow::isConnect()
 {
     QHostAddress hostAddr(ipNumber);
-    //QHostAddress hostAddr("192.168.43.187");
     QByteArray readData;
     char* stringData;
     char param[3];
@@ -152,9 +151,7 @@ void MainWindow::isConnect()
                 socket->waitForReadyRead(17); //waiting data
                 socket->bytesAvailable();
                 readData = socket->readAll();
-                stringData = readData.data(); //data format = routeX,routeY,isFound,rotation
-               // qDebug() << "readData: " <<readData.data() << endl;
-                //qDebug()<< "sizeof: " << strlen(stringData) << endl;
+                stringData = readData.data();
 
                 if( strlen(stringData) == 11 ){
                     //qDebug() <<"stringData: "<< stringData << endl;
@@ -168,9 +165,10 @@ void MainWindow::isConnect()
                         strcpy(param,strtok(NULL," ,"));
 
                         rotation = atoi(param) - 200;
-                        if( rotation != 799 && rotation < 799 && !isFound/*0 <= rotation && rotation != 360 && rotation != 270 && rotation != 90 && rotation < 360 */){
+                        if( rotation != 799 && rotation < 799 && !isFound){
                             qDebug() << "readData: " <<readData.data() << endl;
                             ui->picLabel->setPixmap(QPixmap(":/images/cin2.bmp"));
+                            ui->picLabel->show();
                             rotatePic(rotation);
                             isFound = true;
                             foundRouteX = routeX;
@@ -207,7 +205,8 @@ void MainWindow::sendData(){
 
 void MainWindow::updateBrow()
 {
-    ui->coordinatBrowser->append("X:"+QString::number(foundRouteX)+"\tY:"+QString::number(foundRouteY) + " °" + QString::number(foundRotaion));
+    ++foundedCounter;
+    ui->coordinatBrowser->append(QString::number(foundedCounter) + ") X:"+QString::number(foundRouteX)+"\tY:"+QString::number(foundRouteY) + "\t°" + QString::number(foundRotaion));
 }
 
 void MainWindow::realtimeDataSlotFirst() {
@@ -235,7 +234,7 @@ void MainWindow::realtimeDataSlotFirst() {
         ui->statusBar->showMessage(
                 QString("%1 FPS, Total Data points: %2")
                         .arg(frameCount / (key - lastFpsKey), 0, 'f', 0)
-                        .arg(ui->customPlot->graph(0)->data()->size()/*ui->customPlot->graph(1)->data()->size()*/), 0);
+                        .arg(ui->customPlot->graph(0)->data()->size()), 0);
         lastFpsKey = key;
         frameCount = 0;
     }
@@ -295,7 +294,7 @@ void MainWindow::realtimeDataSlotSecond() {
                 QString("%1 FPS, Total Data points: %2")
                         .arg(frameCount / (key - lastFpsKey), 0, 'f', 0)
                         .arg(ui->customPlotSecond->graph(
-                                0)->data()->size()/*ui->customPlot->graph(1)->data()->size()*/), 0);
+                                0)->data()->size()), 0);
         lastFpsKey = key;
         frameCount = 0;
     }
@@ -420,8 +419,9 @@ void MainWindow::on_resetButton_clicked()
         isResetButtonClicked = true;
         isStartButtonClicked = false;
         isStopButtonClicked = false;
+        isFound = false;
+        ui->picLabel->hide();
     }
-    ui->picLabel->hide();
 }
 
 void MainWindow::on_upButton_clicked()

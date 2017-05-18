@@ -53,6 +53,7 @@ private:
     int foundRouteY;
     int foundRotaion;
     int rotation = 0;
+    int foundedCounter =0 ;
     bool isFound = false;
     bool autoMode;
     bool isStartButtonClicked = false;
