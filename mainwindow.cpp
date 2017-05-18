@@ -150,15 +150,15 @@ void MainWindow::isConnect()
             socket->waitForBytesWritten(100);
 
             while(!isStopButtonClicked){
-                socket->waitForReadyRead(100); //waiting data
+                socket->waitForReadyRead(17); //waiting data
                 socket->bytesAvailable();
                 readData = socket->readAll();
                 stringData = readData.data(); //data format = routeX,routeY,isFound,rotation
 
-                qDebug()<< "sizeof: " << strlen(stringData) << endl;
-                qDebug() <<"stringData: "<< stringData << endl;
+                //qDebug()<< "sizeof: " << strlen(stringData) << endl;
 
                 if( strlen(stringData) == 13 ){
+                    qDebug() <<"stringData: "<< stringData << endl;
                     mutex.lock();
                     try{
                         strcpy(param,strtok(stringData," ,"));
@@ -170,15 +170,14 @@ void MainWindow::isConnect()
 
                         if(strcmp(param,"t") == 0){
                             isFound = true;
+                            strcpy(param,strtok(NULL," ,"));
+                            rotation = atoi(param);
+                            rotatePic(rotation);
                         }else if(strcmp(param,"f") == 0){
                             isFound = false;
                         }else {
                             qDebug() << "Invalid value" << endl;
                         }
-
-                        strcpy(param,strtok(NULL," ,"));
-                        rotation = atoi(param);
-                        rotatePic(rotation);
                     }catch(...){
                         qDebug()<< "parse error" << endl;
                     }
@@ -350,7 +349,11 @@ void MainWindow::on_stopButton_clicked()
         isStopButtonClicked = true;
         onClickedMessage = "q";
         sendData();
-        //socket->close();
+        try{
+           // socket->close();
+        }catch(...){
+            qDebug() << "socket close failed" << endl;
+        }
         ui->comPortBox->setEnabled(true);
         ui->ipNumberLine->setEnabled(true);
         ui->portButton->setEnabled(true);
@@ -371,11 +374,11 @@ void MainWindow::on_portButton_clicked()
     qDebug() << temp.toLatin1();
     ipNumber = ui->ipNumberLine->text();
     qDebug("ipNumber: ");
-    qDebug(ipNumber.toLatin1());
+    qDebug() << ipNumber.toLatin1() << endl;
 
     QString comPort = ui->comPortBox->currentText();
 
-    qDebug(comPort.toLatin1());
+    qDebug() << comPort.toLatin1();
 
     if(comPort.compare("COM1") == 0){
         comPortNumber = 0;

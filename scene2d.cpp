@@ -67,13 +67,13 @@ void Scene2d::addRuller(){
     QPen linePen(Qt::blue);
     for (int var = 0; var < RIGHT_BORDER-29; ++var) {
         if(var % 50 == 0){
-            //this->addText();
-            this->addLine(var+LEFT_BORDER,0,var+LEFT_BORDER,30,linePen);
+
+            this->addLine(var+LEFT_BORDER,30,var+LEFT_BORDER,0,linePen);
         }
         else if(var % 25 == 0)
-            this->addLine(var+LEFT_BORDER,0,var+LEFT_BORDER,20,linePen);
+            this->addLine(var+LEFT_BORDER,20,var+LEFT_BORDER,0,linePen);
         else if(var % 5 == 0)
-            this->addLine(var+LEFT_BORDER,0,var+LEFT_BORDER,10,linePen);
+            this->addLine(var+LEFT_BORDER,10,var+LEFT_BORDER,0,linePen);
     }
     for(int i = 0; i < BOTTOM_BORDER-29; ++i){
         if(i % 50 == 0)

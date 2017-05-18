@@ -466,6 +466,54 @@
      <string>TextLabel</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_5">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>10</y>
+      <width>301</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Project Information</string>
+    </property>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>281</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="plainText">
+      <string>PROJE 396 - FIND JOE 
+
+Proje Ekip Üyeleri
+Adnan Uğur İNAÇ
+Ahmet ÖZYILMAZ
+Deniz BABAT
+Emrullah GENÇOĞLU
+Hasan BİLGİN
+Mehmet Gürol ÇAY
+Yasin AÇIKGÖZ
+Yasin TULUMEN</string>
+     </property>
+     <property name="centerOnScroll">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
