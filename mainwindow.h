@@ -49,6 +49,9 @@ private:
     int comPortNumber = -1;
     int routeX = 0;
     int routeY = 0;
+    int foundRouteX;
+    int foundRouteY;
+    int foundRotaion;
     int rotation = 0;
     bool isFound = false;
     bool autoMode;

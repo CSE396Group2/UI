@@ -541,6 +541,16 @@ Emrullah GENÇOĞLU</string>
      </property>
     </widget>
    </widget>
+   <widget class="QTextEdit" name="coordinatBrowser">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>510</y>
+      <width>281</width>
+      <height>41</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

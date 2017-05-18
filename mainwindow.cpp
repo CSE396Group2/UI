@@ -9,10 +9,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene2d = new Scene2d(this);
     coorBrowTh = new CoordinateBrowserTh(this);
     scene2dTh = new Scene2dTh(this);
+    coorBrowTh = new CoordinateBrowserTh();
 
     ui->graphicsView->setScene(scene2d);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->auModeCheckBox->setCheckable(true);
+
 
 
     //x-t, y-t graphics
@@ -33,8 +35,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->customPlotSecond->xAxis->setTicker(timeTickerSecond);
     ui->customPlot->axisRect()->setupFullAxesBox();
     ui->customPlotSecond->axisRect()->setupFullAxesBox();
-    ui->customPlot->yAxis->setRange(0, 700);
-    ui->customPlotSecond->yAxis->setRange(0, 700);
+    ui->customPlot->yAxis->setRange(0, 21);
+    ui->customPlotSecond->yAxis->setRange(0, 15);
 
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(ui->customPlotSecond->xAxis, SIGNAL(rangeChanged(QCPRange)), ui->customPlotSecond->xAxis2,
@@ -97,35 +99,6 @@ void MainWindow::startServer(){
     qDebug() << "Server started" ;
 }
 
-
-//int MainWindow::callSocket(char *hostname, unsigned short portnum){
-//    struct sockaddr_in sa;
-//    struct hostent *hp;
-//    int a, s;
-
-//    if ((hp= gethostbyname(hostname)) == NULL)
-//        qDebug() << "gethostbyname";
-
-//    memset(&sa,0,sizeof(sa));
-//    sa.sin_family= AF_INET;
-//    sa.sin_port= htons((u_short)portnum);
-//    inet_pton(AF_INET, hostname, &sa.sin_addr.s_addr);
-
-//    if ((s = ::socket(AF_INET,SOCK_STREAM,0)) < 0)
-//        return -1;
-
-////    if(bind(s,(struct sockaddr *)&sa,sizeof(sa)) < 0) {
-////        ::close(s);
-////        qDebug() << "cannot bind socket" << endl;
-////    }
-
-//    if (::connect(s, (struct sockaddr *)&sa,sizeof(sa)) < 0){
-//        ::close(s);
-//        return -1;
-//    }
-//    return(s);
-//}
-
 void MainWindow::isConnect()
 {
     QHostAddress hostAddr(ipNumber);
@@ -134,12 +107,6 @@ void MainWindow::isConnect()
     char* stringData;
     char param[3];
     socket->connectToHost(hostAddr,portNumber);
-//    socketFD = callSocket(ipNumber, portNumber);
-//    if(socketFD<0){
-//        qDebug("raspberry pi uzerindeki server aktif degil.");
-//    }
-
-//    ::write(socketFD, comPortNumber, sizeof(t));
 
     if(socket->waitForConnected(5000)){
         timer2d.start();
@@ -201,10 +168,15 @@ void MainWindow::isConnect()
                         strcpy(param,strtok(NULL," ,"));
 
                         rotation = atoi(param) - 200;
-                        if( rotation != 799/*0 <= rotation && rotation != 360 && rotation != 270 && rotation != 90 && rotation < 360 */){
+                        if( rotation != 799 && rotation < 799 && !isFound/*0 <= rotation && rotation != 360 && rotation != 270 && rotation != 90 && rotation < 360 */){
                             qDebug() << "readData: " <<readData.data() << endl;
                             ui->picLabel->setPixmap(QPixmap(":/images/cin2.bmp"));
                             rotatePic(rotation);
+                            isFound = true;
+                            foundRouteX = routeX;
+                            foundRouteY = routeY;
+                            foundRotaion = rotation;
+                            coorBrowTh->start();
                         }
                         qDebug() << "routeX:" << routeX << "routeY: " << routeY << "rotaion: " << rotation << endl;
                     }catch(...){
@@ -212,8 +184,7 @@ void MainWindow::isConnect()
                     }
 
                     scene2d->setBoard(routeY,routeX);
-                    scene2dTh->start();
-                    coorBrowTh->start();
+                    scene2dTh->update2DScene();
                     mutex.unlock();
                     if(isStopButtonClicked){
                         qDebug() << "stop button skaldjlds";
@@ -236,7 +207,7 @@ void MainWindow::sendData(){
 
 void MainWindow::updateBrow()
 {
-    //ui->coordinatBrowser->append("X:"+QString::number(routeX)+"\tY:"+QString::number(routeY));
+    ui->coordinatBrowser->append("X:"+QString::number(foundRouteX)+"\tY:"+QString::number(foundRouteY) + " °" + QString::number(foundRotaion));
 }
 
 void MainWindow::realtimeDataSlotFirst() {
@@ -248,7 +219,7 @@ void MainWindow::realtimeDataSlotFirst() {
     if (key - lastPointKey > 0.5) // at most add point every 2 ms
     {
         // add data to lines:
-        ui->customPlot->graph(0)->addData(key, routeX);
+        ui->customPlot->graph(0)->addData(key, routeY/30);
         lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
@@ -307,7 +278,7 @@ void MainWindow::realtimeDataSlotSecond() {
     if (key - lastPointKey > 0.5) // at most add point every 2 ms
     {
         // add data to lines:
-        ui->customPlotSecond->graph(0)->addData(key, routeY);
+        ui->customPlotSecond->graph(0)->addData(key, routeX/30);
         lastPointKey = key;
     }
     // make key axis range scroll with the data (at a constant range size of 8):
@@ -341,6 +312,8 @@ void MainWindow::on_startButton_clicked()
         startTimer();//start timer
         dataTimerFirst.start();
         dataTimerSecond.start();
+        scene2dTh->start();
+
         if(ui->auModeCheckBox->isChecked()){
             qDebug() << "true";
             ui->auModeCheckBox->setChecked(true);
@@ -391,6 +364,7 @@ void MainWindow::on_stopButton_clicked()
         dataTimerFirst.stop();
         dataTimerSecond.stop();
         ui->picLabel->hide();
+        isFound = false;
         qDebug() << "stopButton was clicked";
     }
 }
