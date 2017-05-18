@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->auModeCheckBox->setCheckable(true);
 
-    ui->picLabel->setPixmap(QPixmap(":/images/cin2.bmp"));
 
     //x-t, y-t graphics
     ui->customPlot->addGraph(); // blue line
@@ -55,7 +54,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(connectionTh,SIGNAL(startConnection()),this,SLOT(isConnect()),Qt::DirectConnection);
     connect(coorBrowTh,SIGNAL(updateBrowser()),this,SLOT(updateBrow()));
     connect(scene2dTh,SIGNAL(update2DScene()),this,SLOT(update2DCoordinates()));
-    rotatePic(rotation);
 
     server = new QTcpServer();
 }
@@ -100,6 +98,34 @@ void MainWindow::startServer(){
 }
 
 
+//int MainWindow::callSocket(char *hostname, unsigned short portnum){
+//    struct sockaddr_in sa;
+//    struct hostent *hp;
+//    int a, s;
+
+//    if ((hp= gethostbyname(hostname)) == NULL)
+//        qDebug() << "gethostbyname";
+
+//    memset(&sa,0,sizeof(sa));
+//    sa.sin_family= AF_INET;
+//    sa.sin_port= htons((u_short)portnum);
+//    inet_pton(AF_INET, hostname, &sa.sin_addr.s_addr);
+
+//    if ((s = ::socket(AF_INET,SOCK_STREAM,0)) < 0)
+//        return -1;
+
+////    if(bind(s,(struct sockaddr *)&sa,sizeof(sa)) < 0) {
+////        ::close(s);
+////        qDebug() << "cannot bind socket" << endl;
+////    }
+
+//    if (::connect(s, (struct sockaddr *)&sa,sizeof(sa)) < 0){
+//        ::close(s);
+//        return -1;
+//    }
+//    return(s);
+//}
+
 void MainWindow::isConnect()
 {
     QHostAddress hostAddr(ipNumber);
@@ -108,6 +134,12 @@ void MainWindow::isConnect()
     char* stringData;
     char param[3];
     socket->connectToHost(hostAddr,portNumber);
+//    socketFD = callSocket(ipNumber, portNumber);
+//    if(socketFD<0){
+//        qDebug("raspberry pi uzerindeki server aktif degil.");
+//    }
+
+//    ::write(socketFD, comPortNumber, sizeof(t));
 
     if(socket->waitForConnected(5000)){
         timer2d.start();
@@ -154,11 +186,11 @@ void MainWindow::isConnect()
                 socket->bytesAvailable();
                 readData = socket->readAll();
                 stringData = readData.data(); //data format = routeX,routeY,isFound,rotation
-
+               // qDebug() << "readData: " <<readData.data() << endl;
                 //qDebug()<< "sizeof: " << strlen(stringData) << endl;
 
-                if( strlen(stringData) == 13 ){
-                    qDebug() <<"stringData: "<< stringData << endl;
+                if( strlen(stringData) == 11 ){
+                    //qDebug() <<"stringData: "<< stringData << endl;
                     mutex.lock();
                     try{
                         strcpy(param,strtok(stringData," ,"));
@@ -168,22 +200,18 @@ void MainWindow::isConnect()
 
                         strcpy(param,strtok(NULL," ,"));
 
-                        if(strcmp(param,"t") == 0){
-                            isFound = true;
-                            strcpy(param,strtok(NULL," ,"));
-                            rotation = atoi(param);
+                        rotation = atoi(param) - 200;
+                        if( rotation != 799/*0 <= rotation && rotation != 360 && rotation != 270 && rotation != 90 && rotation < 360 */){
+                            qDebug() << "readData: " <<readData.data() << endl;
+                            ui->picLabel->setPixmap(QPixmap(":/images/cin2.bmp"));
                             rotatePic(rotation);
-                        }else if(strcmp(param,"f") == 0){
-                            isFound = false;
-                        }else {
-                            qDebug() << "Invalid value" << endl;
                         }
+                        qDebug() << "routeX:" << routeX << "routeY: " << routeY << "rotaion: " << rotation << endl;
                     }catch(...){
                         qDebug()<< "parse error" << endl;
                     }
 
-                    qDebug() << "routeX:-" << routeX << "routeY: " << routeY << "isFound: " << isFound << "rotaion: " << rotation <<"-" << endl;
-                    scene2d->setBoard(routeX,routeY);
+                    scene2d->setBoard(routeY,routeX);
                     scene2dTh->start();
                     coorBrowTh->start();
                     mutex.unlock();
@@ -337,6 +365,7 @@ void MainWindow::on_startButton_clicked()
     ui->ipNumberLine->setDisabled(true);
     ui->portButton->setDisabled(true);
     ui->comPortBox->setDisabled(true);
+    ui->portNumberLine->setDisabled(true);
 }
 
 void MainWindow::on_stopButton_clicked()
@@ -358,9 +387,10 @@ void MainWindow::on_stopButton_clicked()
         ui->ipNumberLine->setEnabled(true);
         ui->portButton->setEnabled(true);
         ui->comPortBox->setEnabled(true);
+        ui->portNumberLine->setEnabled(true);
         dataTimerFirst.stop();
         dataTimerSecond.stop();
-
+        ui->picLabel->hide();
         qDebug() << "stopButton was clicked";
     }
 }
@@ -372,10 +402,12 @@ void MainWindow::on_portButton_clicked()
     portNumber = temp.toInt();
     qDebug("portNumber: ");
     qDebug() << temp.toLatin1();
-    ipNumber = ui->ipNumberLine->text();
+    //strcpy(ipNumber,ui->ipNumberLine->text().toLatin1());
+	ipNumber = ui->ipNumberLine->text();
     qDebug("ipNumber: ");
+    //qDebug() << ipNumber << endl;
     qDebug() << ipNumber.toLatin1() << endl;
-
+	
     QString comPort = ui->comPortBox->currentText();
 
     qDebug() << comPort.toLatin1();
@@ -414,7 +446,8 @@ void MainWindow::on_resetButton_clicked()
         isResetButtonClicked = true;
         isStartButtonClicked = false;
         isStopButtonClicked = false;
-     }
+    }
+    ui->picLabel->hide();
 }
 
 void MainWindow::on_upButton_clicked()

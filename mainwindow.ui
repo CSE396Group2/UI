@@ -10,13 +10,19 @@
     <x>0</x>
     <y>0</y>
     <width>1408</width>
-    <height>1056</height>
+    <height>1020</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1408</width>
-    <height>1056</height>
+    <height>1020</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1408</width>
+    <height>1020</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -133,8 +139,8 @@
       <string>Up</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>images/icon-arrow-up.png</normaloff>images/icon-arrow-up.png</iconset>
+      <iconset resource="images.qrc">
+       <normaloff>:/images/icon-arrow-up.png</normaloff>:/images/icon-arrow-up.png</iconset>
      </property>
     </widget>
     <widget class="QPushButton" name="downButton">
@@ -150,8 +156,8 @@
       <string>Down</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>images/icon-arrow-down.png</normaloff>images/icon-arrow-down.png</iconset>
+      <iconset resource="images.qrc">
+       <normaloff>:/images/icon-arrow-down.png</normaloff>:/images/icon-arrow-down.png</iconset>
      </property>
     </widget>
     <widget class="QPushButton" name="leftButton">
@@ -167,8 +173,8 @@
       <string>Left</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>images/icon-arrow-left.png</normaloff>images/icon-arrow-left.png</iconset>
+      <iconset resource="images.qrc">
+       <normaloff>:/images/icon-arrow-left.png</normaloff>:/images/icon-arrow-left.png</iconset>
      </property>
     </widget>
     <widget class="QPushButton" name="rightButton">
@@ -184,8 +190,8 @@
       <string>Right</string>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>images/icon-arrow-right.png</normaloff>images/icon-arrow-right.png</iconset>
+      <iconset resource="images.qrc">
+       <normaloff>:/images/icon-arrow-right.png</normaloff>:/images/icon-arrow-right.png</iconset>
      </property>
     </widget>
     <widget class="QCheckBox" name="auModeCheckBox">
@@ -359,7 +365,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>597</y>
+      <y>567</y>
       <width>901</width>
       <height>381</height>
      </rect>
@@ -447,7 +453,7 @@
     <property name="geometry">
      <rect>
       <x>952</x>
-      <y>615</y>
+      <y>585</y>
       <width>410</width>
       <height>364</height>
      </rect>
@@ -457,13 +463,13 @@
     <property name="geometry">
      <rect>
       <x>960</x>
-      <y>620</y>
+      <y>590</y>
       <width>391</width>
       <height>351</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_5">
@@ -478,39 +484,60 @@
     <property name="title">
      <string>Project Information</string>
     </property>
-    <widget class="QPlainTextEdit" name="plainTextEdit">
+    <widget class="QLabel" name="teamNames">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>281</width>
-       <height>291</height>
+       <x>50</x>
+       <y>20</y>
+       <width>201</width>
+       <height>251</height>
       </rect>
      </property>
      <property name="font">
       <font>
+       <pointsize>12</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-     <property name="plainText">
+     <property name="text">
       <string>PROJE 396 - FIND JOE 
 
 Proje Ekip Üyeleri
+
+Deniz BABAT
+Hasan BİLGİN
+Yasin AÇIKGÖZ
+Yasin TULUMEN
 Adnan Uğur İNAÇ
 Ahmet ÖZYILMAZ
-Deniz BABAT
-Emrullah GENÇOĞLU
-Hasan BİLGİN
 Mehmet Gürol ÇAY
-Yasin AÇIKGÖZ
-Yasin TULUMEN</string>
+Emrullah GENÇOĞLU</string>
      </property>
-     <property name="centerOnScroll">
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="universitLogo">
+     <property name="geometry">
+      <rect>
+       <x>18</x>
+       <y>293</y>
+       <width>261</width>
+       <height>241</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="images.qrc">:/images/gtu_logo.png</pixmap>
+     </property>
+     <property name="scaledContents">
       <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>
@@ -544,6 +571,8 @@ Yasin TULUMEN</string>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

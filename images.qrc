@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file>images/cin2.bmp</file>
+        <file>images/gtu_logo.png</file>
+        <file>images/icon-arrow-down.png</file>
+        <file>images/icon-arrow-left.png</file>
+        <file>images/icon-arrow-right.png</file>
+        <file>images/icon-arrow-up.png</file>
     </qresource>
 </RCC>

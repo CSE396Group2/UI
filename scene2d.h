@@ -18,7 +18,7 @@ public:
     const qreal RIGHT_BORDER = 660; //x
     const qreal TOP_BORDER = 30; //y
     const qreal BOTTOM_BORDER = 474; //y
-    const qreal BALL_RADIUS = 10;
+    const qreal BALL_RADIUS = 5;
 private:
      qreal collisionX(qreal x);
      qreal collisionY(qreal y);
