@@ -175,6 +175,7 @@ void MainWindow::isConnect()
                             foundRouteY = routeY;
                             foundRotaion = rotation;
                             coorBrowTh->start();
+                            stopTimer();
                         }
                         qDebug() << "routeX:" << routeX << "routeY: " << routeY << "rotaion: " << rotation << endl;
                     }catch(...){
